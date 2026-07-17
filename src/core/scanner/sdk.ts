@@ -114,7 +114,13 @@ export async function scanSdks(
       [...match.dependencyEvidence, ...match.sourceEvidence, ...match.configEvidence],
       `sdk ${signature.id}`,
     );
-    sdks.push({ id: signature.id, category: signature.category, confidence, evidence });
+    sdks.push({
+      id: signature.id,
+      name: signature.name ?? signature.id,
+      category: signature.category,
+      confidence,
+      evidence,
+    });
 
     for (const dataType of signature.data_safety.collects) {
       const existing = dataCollection[dataType];

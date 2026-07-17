@@ -16,6 +16,8 @@ export const appshipConfigSchema = z.object({
     name: z.string().min(1),
     description: z.string().min(1),
     audience: z.array(z.string()).default([]),
+    requires_login: z.boolean().optional(),
+    collects_personal_data: z.boolean().optional(),
   }),
   platforms: z.object({
     ios: z
@@ -32,6 +34,7 @@ export const appshipConfigSchema = z.object({
   stores: z.object({
     default_locale: z.string().default('en-US'),
     locales: z.array(z.string()).min(1).default(['en-US']),
+    countries: z.array(z.string()).default([]),
   }),
   ai: z
     .object({

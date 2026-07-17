@@ -36,6 +36,7 @@ export interface PermissionsReport {
 
 export interface SdkFinding {
   id: string;
+  name: string;
   category: string;
   confidence: Confidence;
   evidence: string[];

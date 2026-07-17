@@ -7,6 +7,7 @@
 #   config_keys only     -> low
 
 - id: firebase-analytics
+  name: Firebase Analytics
   category: analytics
   detect:
     dependencies:
@@ -21,6 +22,7 @@
     requires_confirmation: false
 
 - id: sentry
+  name: Sentry
   category: crash-reporting
   detect:
     dependencies:
@@ -35,6 +37,7 @@
     requires_confirmation: false
 
 - id: revenuecat
+  name: RevenueCat
   category: payments
   detect:
     dependencies:
@@ -49,6 +52,7 @@
     requires_confirmation: false
 
 - id: location
+  name: Location APIs
   category: device-api
   detect:
     dependencies:

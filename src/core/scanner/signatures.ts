@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 const sdkSignatureSchema = z.object({
   id: z.string().min(1),
+  name: z.string().min(1).optional(),
   category: z.string().min(1),
   detect: z.object({
     dependencies: z.array(z.string()).default([]),
