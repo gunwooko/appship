@@ -33,6 +33,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.112.3",
     "@clack/prompts": "^1.7.0",
     "commander": "^12.1.0",
     "fast-glob": "^3.3.3",
