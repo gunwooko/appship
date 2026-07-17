@@ -37,7 +37,7 @@ detect ──▶ scan ──▶ generate ──▶ validate ──▶ report
 
 ## 2. 구현 언어: Go vs TypeScript
 
-> **결정 상태: 보류.** 아래 비교를 근거로 최종 결정한다. 추천은 §2.3.
+> **결정 상태: TypeScript로 확정 (2026-07-17).** 근거는 §2.3. 아래 비교는 결정 기록으로 유지한다.
 
 ### 2.1 비교표
 
@@ -491,7 +491,7 @@ appship doctor [--store app-store|google-play] [--json]
 
 | 항목 | 상태 |
 |---|---|
-| 구현 언어 (Go vs TS) | **보류** — §2.3에서 TS 추천, 최종 결정 필요 |
+| 구현 언어 (Go vs TS) | ~~보류~~ → **TypeScript 확정** (2026-07-17, §2.3 근거) |
 | 프로젝트/패키지 이름 확정 (appship vs 기타) | npm/브랜드 가용성 확인 후 결정 |
 | AI 기본 프로바이더/모델 | Anthropic + claude-sonnet-5를 기본값으로 제안, 추상화로 교체 가능 |
 | `.appship/`을 git에 커밋할지 권장 여부 | 커밋 권장(리뷰 가능한 제출 자료) 방향으로 제안, README에서 안내 예정 |

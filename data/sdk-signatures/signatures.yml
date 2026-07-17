@@ -1,0 +1,69 @@
+# SDK signature database (TRD §6).
+# Declarative — adding a signature must never require a code change.
+#
+# confidence rules applied by the scanner:
+#   dependencies match  -> high
+#   source_patterns only -> medium
+#   config_keys only     -> low
+
+- id: firebase-analytics
+  category: analytics
+  detect:
+    dependencies:
+      - "@react-native-firebase/analytics"
+    source_patterns:
+      - "analytics\\(\\)\\.logEvent"
+    config_keys: []
+  data_safety:
+    collects: [device_id, app_interactions]
+    purpose_defaults: [analytics]
+    shared_default: true
+    requires_confirmation: false
+
+- id: sentry
+  category: crash-reporting
+  detect:
+    dependencies:
+      - "@sentry/react-native"
+    source_patterns:
+      - "Sentry\\.init"
+    config_keys: []
+  data_safety:
+    collects: [crash_logs, diagnostics, device_id]
+    purpose_defaults: [app_functionality]
+    shared_default: true
+    requires_confirmation: false
+
+- id: revenuecat
+  category: payments
+  detect:
+    dependencies:
+      - "react-native-purchases"
+    source_patterns:
+      - "Purchases\\.configure"
+    config_keys: []
+  data_safety:
+    collects: [purchase_history]
+    purpose_defaults: [app_functionality]
+    shared_default: true
+    requires_confirmation: false
+
+- id: location
+  category: device-api
+  detect:
+    dependencies:
+      - "@react-native-community/geolocation"
+      - "react-native-geolocation-service"
+    source_patterns:
+      - "Geolocation\\.getCurrentPosition"
+      - "watchPosition"
+    config_keys:
+      - NSLocationWhenInUseUsageDescription
+      - android.permission.ACCESS_FINE_LOCATION
+      - android.permission.ACCESS_COARSE_LOCATION
+  data_safety:
+    collects: [location]
+    purpose_defaults: [app_functionality]
+    shared_default: false
+    # precise vs approximate vs local-only cannot be decided from code
+    requires_confirmation: true

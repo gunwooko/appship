@@ -1,0 +1,46 @@
+# doctor rules for the App Store (TRD §7).
+# severity: error -> ✗ (weight 3), warning -> ⚠ (weight 1)
+
+- id: apple-name-length
+  store: app-store
+  category: length
+  severity: error
+  target: app-store/*/name.txt
+  check: { type: max_length, value: 30 }
+  message: "App name exceeds Apple's 30 character limit"
+
+- id: apple-subtitle-length
+  store: app-store
+  category: length
+  severity: error
+  target: app-store/*/subtitle.txt
+  check: { type: max_length, value: 30 }
+  message: "Subtitle exceeds Apple's 30 character limit"
+
+- id: apple-keywords-length
+  store: app-store
+  category: length
+  severity: error
+  target: app-store/*/keywords.txt
+  check: { type: max_length, value: 100 }
+  message: "Keywords exceed Apple's 100 character limit"
+
+- id: account-deletion-required
+  store: app-store
+  category: consistency
+  severity: error
+  condition: { finding: login_detected }
+  check: { type: file_exists, value: legal/account-deletion.md }
+  message: "User registration detected but no account deletion flow found"
+  guideline: "Apple Guideline 5.1.1"
+  fix_suggestions:
+    - "Add account deletion under Settings > Account"
+    - "Mention the deletion path in App Review Notes"
+
+- id: unresolved-confirm-placeholders
+  store: app-store
+  category: consistency
+  severity: error
+  target: "**/*.md"
+  check: { type: not_contains, value: "[CONFIRM:" }
+  message: "Generated document still contains unresolved [CONFIRM] placeholders"

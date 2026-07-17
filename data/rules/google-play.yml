@@ -1,0 +1,33 @@
+# doctor rules for Google Play (TRD §7).
+
+- id: play-title-length
+  store: google-play
+  category: length
+  severity: error
+  target: google-play/*/title.txt
+  check: { type: max_length, value: 30 }
+  message: "App title exceeds Google Play's 30 character limit"
+
+- id: play-short-description-length
+  store: google-play
+  category: length
+  severity: error
+  target: google-play/*/short-description.txt
+  check: { type: max_length, value: 80 }
+  message: "Short description exceeds Google Play's 80 character limit"
+
+- id: play-full-description-length
+  store: google-play
+  category: length
+  severity: error
+  target: google-play/*/full-description.txt
+  check: { type: max_length, value: 4000 }
+  message: "Full description exceeds Google Play's 4000 character limit"
+
+- id: play-no-emoji-in-title
+  store: google-play
+  category: policy
+  severity: warning
+  target: google-play/*/title.txt
+  check: { type: no_emoji }
+  message: "Emoji in the title may violate Google Play metadata policy"

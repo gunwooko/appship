@@ -1,0 +1,48 @@
+{
+  "name": "appship",
+  "version": "0.1.0",
+  "description": "Open-source AI release assistant that analyzes your mobile app and prepares everything required for App Store and Google Play submission",
+  "type": "module",
+  "bin": {
+    "appship": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "data"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "keywords": [
+    "app-store",
+    "google-play",
+    "release",
+    "cli",
+    "ai",
+    "react-native",
+    "fastlane",
+    "metadata"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "picocolors": "^1.1.1",
+    "yaml": "^2.6.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
