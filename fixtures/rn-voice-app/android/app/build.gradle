@@ -1,0 +1,12 @@
+apply plugin: "com.android.application"
+
+android {
+    namespace "com.example.rnvoiceapp"
+    defaultConfig {
+        applicationId "com.example.rnvoiceapp"
+        minSdkVersion 23
+        targetSdkVersion 34
+        versionCode 12
+        versionName "1.2.0"
+    }
+}
