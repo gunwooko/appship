@@ -7,6 +7,7 @@ import { exportCommand } from './cli/export.js';
 import { uploadCommand } from './cli/upload.js';
 import { screenshotsCommand } from './cli/screenshots.js';
 import { submitCommand } from './cli/submit.js';
+import { reviewCommand } from './cli/review.js';
 
 const program = new Command();
 
@@ -24,6 +25,7 @@ program.addCommand(exportCommand);
 program.addCommand(uploadCommand);
 program.addCommand(screenshotsCommand);
 program.addCommand(submitCommand);
+program.addCommand(reviewCommand);
 program.addCommand(doctorCommand);
 
 program.parseAsync(process.argv);

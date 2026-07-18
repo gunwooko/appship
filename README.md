@@ -20,6 +20,7 @@ appship screenshots capture  # run the flows on a device/emulator via Maestro
 appship submit ios           # submit the latest uploaded build for App Store review
 appship submit android       # promote a tested Play track to production review
 appship doctor               # check submission readiness and rejection risks (offline)
+appship review analyze r.txt # turn a store rejection message into a fix plan
 ```
 
 `export fastlane` maps everything under `.appship/` into `fastlane/metadata/` (deliver) and `fastlane/metadata/android/` (supply), plus starter `Appfile`/`Fastfile` upload lanes — existing fastlane files are never overwritten without `--force`. Upload with `bundle exec fastlane ios upload_metadata` / `... android upload_metadata`.
@@ -30,7 +31,9 @@ appship doctor               # check submission readiness and rejection risks (o
 
 `screenshots flows` generates one [Maestro](https://maestro.mobile.dev) flow per screen in the plan; each flow carries a navigation TODO that only you can fill in (appship can't know how to reach your screens). `capture` refuses to run while TODOs remain, then runs `maestro test` and drops PNGs into `.appship/screenshots/raw/`. Your edited flows are never overwritten without `--force`.
 
-`generate` and `localize` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
+`review analyze` reads a rejection message you copied from App Store Connect / Play Console into a text file, and produces per-issue fix steps, the appship commands that help, and (for issues resolvable by replying) a draft response to the review team — written to `.appship/review/rejection-analysis.md`. Guidelines are only cited when the message cites them; nothing is invented beyond the message and the scanned project facts.
+
+`generate`, `localize`, and `review analyze` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
 
 Supported projects: React Native CLI and Expo (managed) — identity and permissions are read from native files (`Info.plist`, `AndroidManifest.xml`, `project.pbxproj`, `build.gradle`) or from `app.json`'s `expo` config.
 
