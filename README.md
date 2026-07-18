@@ -9,12 +9,13 @@ Ship your mobile app without spending hours inside App Store Connect and Google 
 ## Commands (MVP 1)
 
 ```bash
-appship init      # analyze your React Native project, ask a few questions
-appship generate  # generate store metadata, privacy docs, legal drafts into .appship/
-appship doctor    # check submission readiness and rejection risks (offline)
+appship init                 # analyze your React Native project, ask a few questions
+appship generate             # generate store metadata, privacy docs, legal drafts into .appship/
+appship localize ko-KR ja-JP # translate generated listings into more locales
+appship doctor               # check submission readiness and rejection risks (offline)
 ```
 
-`generate` calls an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline.
+`generate` and `localize` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
 
 Supported projects: React Native CLI and Expo (managed) — identity and permissions are read from native files (`Info.plist`, `AndroidManifest.xml`, `project.pbxproj`, `build.gradle`) or from `app.json`'s `expo` config.
 

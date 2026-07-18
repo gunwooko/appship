@@ -108,17 +108,20 @@ function buildPrompt(payload: SummaryPayload, locale: string, store: string): st
   );
 }
 
-async function generateWithRetry<T>(
+/**
+ * Generate a structured object and re-prompt with violation feedback until it
+ * passes validation (or retries are exhausted). Shared by generate and localize.
+ */
+export async function generateWithRetry<T>(
   provider: AIProvider,
   basePrompt: string,
   jsonSchema: Record<string, unknown>,
   parse: (raw: unknown) => T,
   validate: (listing: T) => Violation[],
+  system: string = SYSTEM_PROMPT,
 ): Promise<ListingResult<T>> {
   let prompt = basePrompt;
-  let listing = parse(
-    await provider.generateObject({ system: SYSTEM_PROMPT, prompt, jsonSchema }),
-  );
+  let listing = parse(await provider.generateObject({ system, prompt, jsonSchema }));
   let violations = validate(listing);
 
   for (let attempt = 0; violations.length > 0 && attempt < MAX_RETRIES; attempt++) {
@@ -126,9 +129,7 @@ async function generateWithRetry<T>(
       basePrompt +
       '\n\nYour previous attempt violated these constraints — fix them and regenerate:\n' +
       violations.map((v) => `- ${v.message}`).join('\n');
-    listing = parse(
-      await provider.generateObject({ system: SYSTEM_PROMPT, prompt, jsonSchema }),
-    );
+    listing = parse(await provider.generateObject({ system, prompt, jsonSchema }));
     violations = validate(listing);
   }
   return { listing, violations };
