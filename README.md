@@ -12,8 +12,11 @@ Ship your mobile app without spending hours inside App Store Connect and Google 
 appship init                 # analyze your React Native project, ask a few questions
 appship generate             # generate store metadata, privacy docs, legal drafts into .appship/
 appship localize ko-KR ja-JP # translate generated listings into more locales
+appship export fastlane      # export listings to fastlane deliver/supply layouts (offline)
 appship doctor               # check submission readiness and rejection risks (offline)
 ```
+
+`export fastlane` maps everything under `.appship/` into `fastlane/metadata/` (deliver) and `fastlane/metadata/android/` (supply), plus starter `Appfile`/`Fastfile` upload lanes — existing fastlane files are never overwritten without `--force`. Upload with `bundle exec fastlane ios upload_metadata` / `... android upload_metadata`.
 
 `generate` and `localize` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
 

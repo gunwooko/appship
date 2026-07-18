@@ -3,6 +3,7 @@ import { initCommand } from './cli/init.js';
 import { generateCommand } from './cli/generate.js';
 import { doctorCommand } from './cli/doctor.js';
 import { localizeCommand } from './cli/localize.js';
+import { exportCommand } from './cli/export.js';
 
 const program = new Command();
 
@@ -16,6 +17,7 @@ program
 program.addCommand(initCommand);
 program.addCommand(generateCommand);
 program.addCommand(localizeCommand);
+program.addCommand(exportCommand);
 program.addCommand(doctorCommand);
 
 program.parseAsync(process.argv);

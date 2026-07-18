@@ -34,7 +34,11 @@ export function defaultAnswers(scan: ScanResult): InitAnswers {
   };
 }
 
-export function buildConfig(scan: ScanResult, answers: InitAnswers): AppshipConfig {
+export function buildConfig(
+  scan: ScanResult,
+  answers: InitAnswers,
+  existing?: AppshipConfig,
+): AppshipConfig {
   const bundleId = scan.project.ios?.bundleId ?? null;
   const packageName = scan.project.android?.packageName ?? null;
   const locales = answers.locales.length > 0 ? answers.locales : ['en-US'];
@@ -48,6 +52,8 @@ export function buildConfig(scan: ScanResult, answers: InitAnswers): AppshipConf
       ...(answers.collectsPersonalData === null
         ? {}
         : { collects_personal_data: answers.collectsPersonalData }),
+      // preserve fields init doesn't ask about — re-running must not lose them
+      ...(existing?.project.support_url ? { support_url: existing.project.support_url } : {}),
     },
     platforms: {
       ...(bundleId ? { ios: { bundle_id: bundleId } } : {}),
@@ -58,6 +64,7 @@ export function buildConfig(scan: ScanResult, answers: InitAnswers): AppshipConf
       locales,
       countries: answers.countries,
     },
+    ...(existing ? { ai: existing.ai, privacy: existing.privacy } : {}),
   });
 }
 
@@ -100,8 +107,9 @@ export async function runInit(
   projectRoot: string,
   scan: ScanResult,
   answers: InitAnswers,
+  existing?: AppshipConfig,
 ): Promise<InitResult> {
-  const config = buildConfig(scan, answers);
+  const config = buildConfig(scan, answers, existing);
   const [configPath, analysisPaths] = await Promise.all([
     writeConfig(projectRoot, config),
     writeAnalysis(projectRoot, scan),

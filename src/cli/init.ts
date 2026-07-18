@@ -193,7 +193,7 @@ export const initCommand = new Command('init')
       answers = existing ? answersFromExisting(scan, existing) : defaultAnswers(scan);
     }
 
-    const result = await runInit(projectRoot, scan, answers);
+    const result = await runInit(projectRoot, scan, answers, existing ?? undefined);
 
     console.log();
     console.log(pc.green('✓') + ` ${CONFIG_FILENAME} written`);

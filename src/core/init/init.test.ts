@@ -79,6 +79,23 @@ describe('runInit', () => {
     expect(privacyReport.dataCollection.location.requiresConfirmation).toBe(true);
   });
 
+  it('preserves fields init does not ask about when re-running (support_url, ai, privacy)', async () => {
+    const scan = await scanProject(tempRoot);
+    await runInit(tempRoot, scan, ANSWERS);
+
+    // simulate manual edits to appship.yml
+    const existing = await loadConfig(tempRoot);
+    existing.project.support_url = 'https://example.com/support';
+    existing.ai.provider = 'ollama';
+    existing.privacy.send_source_code_to_ai = true;
+
+    await runInit(tempRoot, scan, ANSWERS, existing);
+    const reloaded = await loadConfig(tempRoot);
+    expect(reloaded.project.support_url).toBe('https://example.com/support');
+    expect(reloaded.ai.provider).toBe('ollama');
+    expect(reloaded.privacy.send_source_code_to_ai).toBe(true);
+  });
+
   it('is idempotent — re-running overwrites cleanly', async () => {
     const scan = await scanProject(tempRoot);
     await runInit(tempRoot, scan, ANSWERS);
