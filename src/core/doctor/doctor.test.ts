@@ -123,9 +123,13 @@ describe('runDoctor', () => {
   it('flags unconfirmed data collection and clears after confirmation', async () => {
     const rules = await loadRules();
     const [before] = await runDoctor({ projectRoot: tempRoot, config, scan }, rules, ['google-play']);
-    expect(resultOf(before!, 'data-collection-confirmed')?.status).toBe('fail');
+    const beforeResult = resultOf(before!, 'data-collection-confirmed');
+    expect(beforeResult?.status).toBe('fail');
+    expect(beforeResult?.message).toContain('location');
 
-    scan.privacyReport.dataCollection['location']!.confirmed = true;
+    for (const entry of Object.values(scan.privacyReport.dataCollection)) {
+      if (entry.requiresConfirmation) entry.confirmed = true;
+    }
     const [after] = await runDoctor({ projectRoot: tempRoot, config, scan }, rules, ['google-play']);
     expect(resultOf(after!, 'data-collection-confirmed')?.status).toBe('pass');
   });

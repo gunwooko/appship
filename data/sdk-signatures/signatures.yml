@@ -71,3 +71,237 @@
     shared_default: false
     # precise vs approximate vs local-only cannot be decided from code
     requires_confirmation: true
+
+- id: amplitude
+  name: Amplitude
+  category: analytics
+  detect:
+    dependencies:
+      - "@amplitude/analytics-react-native"
+      - "@amplitude/react-native"
+    source_patterns:
+      - "amplitude\\.(init|track)"
+    config_keys: []
+  data_safety:
+    collects: [device_id, app_interactions]
+    purpose_defaults: [analytics]
+    shared_default: true
+    requires_confirmation: false
+
+- id: mixpanel
+  name: Mixpanel
+  category: analytics
+  detect:
+    dependencies:
+      - "mixpanel-react-native"
+    source_patterns:
+      - "new Mixpanel\\("
+    config_keys: []
+  data_safety:
+    collects: [device_id, app_interactions]
+    purpose_defaults: [analytics]
+    shared_default: true
+    requires_confirmation: false
+
+- id: firebase-crashlytics
+  name: Firebase Crashlytics
+  category: crash-reporting
+  detect:
+    dependencies:
+      - "@react-native-firebase/crashlytics"
+    source_patterns:
+      - "crashlytics\\(\\)"
+    config_keys: []
+  data_safety:
+    collects: [crash_logs, diagnostics, device_id]
+    purpose_defaults: [app_functionality]
+    shared_default: true
+    requires_confirmation: false
+
+- id: google-signin
+  name: Google Sign-In
+  category: auth
+  detect:
+    dependencies:
+      - "@react-native-google-signin/google-signin"
+    source_patterns:
+      - "GoogleSignin\\."
+    config_keys: []
+  data_safety:
+    collects: [email, name, account_info]
+    purpose_defaults: [app_functionality]
+    shared_default: true
+    requires_confirmation: false
+
+- id: apple-signin
+  name: Apple Sign-In
+  category: auth
+  detect:
+    dependencies:
+      - "@invertase/react-native-apple-authentication"
+    source_patterns:
+      - "appleAuth\\."
+    config_keys: []
+  data_safety:
+    collects: [email, name]
+    purpose_defaults: [app_functionality]
+    shared_default: false
+    requires_confirmation: false
+
+- id: facebook-sdk
+  name: Facebook SDK
+  category: auth
+  detect:
+    dependencies:
+      - "react-native-fbsdk-next"
+      - "react-native-fbsdk"
+    source_patterns:
+      - "LoginManager\\.logInWithPermissions"
+    config_keys: []
+  data_safety:
+    collects: [device_id, app_interactions, account_info]
+    purpose_defaults: [app_functionality, advertising]
+    shared_default: true
+    requires_confirmation: false
+
+- id: stripe
+  name: Stripe
+  category: payments
+  detect:
+    dependencies:
+      - "@stripe/stripe-react-native"
+    source_patterns:
+      - "useStripe\\(|initPaymentSheet"
+    config_keys: []
+  data_safety:
+    collects: [payment_info, purchase_history]
+    purpose_defaults: [app_functionality]
+    shared_default: true
+    requires_confirmation: false
+
+- id: admob
+  name: AdMob
+  category: ads
+  detect:
+    dependencies:
+      - "react-native-google-mobile-ads"
+    source_patterns:
+      - "BannerAd|InterstitialAd|RewardedAd"
+    config_keys: []
+  data_safety:
+    collects: [advertising_id, device_id]
+    purpose_defaults: [advertising]
+    shared_default: true
+    requires_confirmation: false
+
+- id: appsflyer
+  name: AppsFlyer
+  category: ads
+  detect:
+    dependencies:
+      - "react-native-appsflyer"
+    source_patterns:
+      - "appsFlyer\\."
+    config_keys: []
+  data_safety:
+    collects: [advertising_id, device_id, app_interactions]
+    purpose_defaults: [analytics, advertising]
+    shared_default: true
+    requires_confirmation: false
+
+- id: onesignal
+  name: OneSignal
+  category: push
+  detect:
+    dependencies:
+      - "react-native-onesignal"
+    source_patterns:
+      - "OneSignal\\."
+    config_keys: []
+  data_safety:
+    collects: [device_id]
+    purpose_defaults: [app_functionality]
+    shared_default: true
+    requires_confirmation: false
+
+- id: firebase-messaging
+  name: Firebase Messaging
+  category: push
+  detect:
+    dependencies:
+      - "@react-native-firebase/messaging"
+    source_patterns:
+      - "messaging\\(\\)\\.(getToken|onMessage)"
+    config_keys: []
+  data_safety:
+    collects: [device_id]
+    purpose_defaults: [app_functionality]
+    shared_default: true
+    requires_confirmation: false
+
+- id: microphone
+  name: Microphone
+  category: device-api
+  detect:
+    dependencies: []
+    source_patterns: []
+    config_keys:
+      - NSMicrophoneUsageDescription
+      - android.permission.RECORD_AUDIO
+  data_safety:
+    collects: [voice_or_audio]
+    purpose_defaults: [app_functionality]
+    shared_default: false
+    # recorded audio may be processed locally only — confirm
+    requires_confirmation: true
+
+- id: camera
+  name: Camera
+  category: device-api
+  detect:
+    dependencies:
+      - "react-native-vision-camera"
+      - "react-native-camera"
+      - "react-native-image-picker"
+    source_patterns: []
+    config_keys:
+      - NSCameraUsageDescription
+      - android.permission.CAMERA
+  data_safety:
+    collects: [photos_and_videos]
+    purpose_defaults: [app_functionality]
+    shared_default: false
+    requires_confirmation: true
+
+- id: contacts
+  name: Contacts
+  category: device-api
+  detect:
+    dependencies:
+      - "react-native-contacts"
+    source_patterns: []
+    config_keys:
+      - NSContactsUsageDescription
+      - android.permission.READ_CONTACTS
+  data_safety:
+    collects: [contacts]
+    purpose_defaults: [app_functionality]
+    shared_default: false
+    requires_confirmation: true
+
+- id: advertising-id
+  name: Advertising ID / Tracking
+  category: device-api
+  detect:
+    dependencies:
+      - "react-native-tracking-transparency"
+    source_patterns:
+      - "requestTrackingPermission"
+    config_keys:
+      - NSUserTrackingUsageDescription
+      - com.google.android.gms.permission.AD_ID
+  data_safety:
+    collects: [advertising_id]
+    purpose_defaults: [advertising]
+    shared_default: true
+    requires_confirmation: true

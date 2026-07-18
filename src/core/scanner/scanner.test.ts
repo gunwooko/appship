@@ -78,8 +78,26 @@ describe('assessUsageDescription', () => {
 describe('loadSignatures', () => {
   it('loads and validates the bundled signature database', async () => {
     const signatures = await loadSignatures();
-    expect(signatures.length).toBeGreaterThanOrEqual(4);
+    expect(signatures.length).toBeGreaterThanOrEqual(18); // TRD §6.2 coverage
     expect(signatures.map((s) => s.id)).toContain('firebase-analytics');
+  });
+
+  it('has unique ids and a display name on every signature', async () => {
+    const signatures = await loadSignatures();
+    const ids = signatures.map((s) => s.id);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const signature of signatures) {
+      expect(signature.name, `signature ${signature.id} needs a name`).toBeTruthy();
+    }
+  });
+
+  it('detects permission-backed device APIs from config keys (low confidence)', async () => {
+    const result = await scanProject(FIXTURE);
+    const microphone = result.sdkReport.sdks.find((s) => s.id === 'microphone');
+    expect(microphone).toBeDefined();
+    expect(microphone!.confidence).toBe('low'); // config_keys match only
+    const audio = result.privacyReport.dataCollection['voice_or_audio'];
+    expect(audio?.requiresConfirmation).toBe(true);
   });
 });
 
