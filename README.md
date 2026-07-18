@@ -13,10 +13,14 @@ appship init                 # analyze your React Native project, ask a few ques
 appship generate             # generate store metadata, privacy docs, legal drafts into .appship/
 appship localize ko-KR ja-JP # translate generated listings into more locales
 appship export fastlane      # export listings to fastlane deliver/supply layouts (offline)
+appship upload ios           # upload a built .ipa to TestFlight via fastlane
+appship upload android       # upload a built .aab to a Play track (default: internal)
 appship doctor               # check submission readiness and rejection risks (offline)
 ```
 
 `export fastlane` maps everything under `.appship/` into `fastlane/metadata/` (deliver) and `fastlane/metadata/android/` (supply), plus starter `Appfile`/`Fastfile` upload lanes — existing fastlane files are never overwritten without `--force`. Upload with `bundle exec fastlane ios upload_metadata` / `... android upload_metadata`.
+
+`upload` finds your newest built artifact (or takes `--ipa`/`--aab`), shows exactly what will run, asks for confirmation (`--yes` to skip, required in CI), then delegates to the fastlane lanes from `export fastlane`. fastlane owns store auth — set up an App Store Connect API key / Play service account per fastlane's docs.
 
 `generate` and `localize` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
 
