@@ -102,6 +102,19 @@ export function fastfileContent(config: AppshipConfig): string {
       skip_waiting_for_build_processing: true
     )
   end
+
+  desc "Submit an already-uploaded build for App Store review (used by appship submit ios)"
+  lane :submit_review do |options|
+    deliver(
+      metadata_path: "fastlane/metadata",
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      submit_for_review: true,
+      automatic_release: false,
+      build_number: options[:build_number] || "latest",
+      force: true
+    )
+  end
 end`,
     );
   }
@@ -125,6 +138,20 @@ end`,
     upload_to_play_store(
       aab: options[:aab],
       track: options[:track] || "internal",
+      skip_upload_metadata: true,
+      skip_upload_screenshots: true,
+      skip_upload_images: true,
+      skip_upload_changelogs: true
+    )
+  end
+
+  desc "Promote a tested build to a release track for review (used by appship submit android)"
+  lane :submit_review do |options|
+    upload_to_play_store(
+      track: options[:from_track] || "internal",
+      track_promote_to: options[:track] || "production",
+      skip_upload_apk: true,
+      skip_upload_aab: true,
       skip_upload_metadata: true,
       skip_upload_screenshots: true,
       skip_upload_images: true,
