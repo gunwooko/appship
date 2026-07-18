@@ -1,0 +1,14 @@
+{
+  "name": "expo-quiz-app",
+  "version": "2.1.0",
+  "private": true,
+  "dependencies": {
+    "expo": "~52.0.0",
+    "react": "18.3.1",
+    "react-native": "0.76.0",
+    "react-native-purchases": "^8.2.0",
+    "mixpanel-react-native": "^3.0.5",
+    "@react-native-google-signin/google-signin": "^13.1.0",
+    "react-native-google-mobile-ads": "^14.2.0"
+  }
+}

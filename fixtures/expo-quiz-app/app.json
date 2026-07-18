@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Quiz Master",
+    "slug": "quiz-master",
+    "version": "2.1.0",
+    "ios": {
+      "bundleIdentifier": "com.example.quizmaster",
+      "infoPlist": {
+        "NSCameraUsageDescription": "The camera lets you set a profile photo that other quiz players can see."
+      }
+    },
+    "android": {
+      "package": "com.example.quizmaster",
+      "permissions": ["CAMERA", "android.permission.POST_NOTIFICATIONS"]
+    }
+  }
+}

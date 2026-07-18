@@ -4,6 +4,7 @@ import glob from 'fast-glob';
 import { APPSHIP_VERSION } from '../../version.js';
 import type { ProjectAnalysis } from '../types.js';
 import { readPackageJson } from './detector.js';
+import { readExpoConfig } from './expo.js';
 
 const IGNORE_DIRS = ['**/node_modules/**', '**/Pods/**', '**/build/**', '**/.git/**'];
 
@@ -40,7 +41,9 @@ export async function readIosBundleId(projectRoot: string): Promise<string | nul
       .filter((id) => !id.endsWith('Tests') && !id.includes('$'));
     if (matches[0]) return matches[0];
   }
-  return null;
+  // Expo managed: no ios/ directory — identity lives in app.json
+  const expo = await readExpoConfig(projectRoot);
+  return expo?.ios?.bundleIdentifier ?? null;
 }
 
 export async function readAndroidPackageName(projectRoot: string): Promise<string | null> {
@@ -67,21 +70,24 @@ export async function readAndroidPackageName(projectRoot: string): Promise<strin
   } catch {
     // no manifest
   }
-  return null;
+  // Expo managed: no android/ directory — identity lives in app.json
+  const expo = await readExpoConfig(projectRoot);
+  return expo?.android?.package ?? null;
 }
 
 export async function analyzeReactNativeProject(projectRoot: string): Promise<ProjectAnalysis> {
   const pkg = await readPackageJson(projectRoot);
-  const [appName, bundleId, packageName] = await Promise.all([
+  const [appName, bundleId, packageName, expo] = await Promise.all([
     readAppName(projectRoot),
     readIosBundleId(projectRoot),
     readAndroidPackageName(projectRoot),
+    readExpoConfig(projectRoot),
   ]);
 
   return {
     projectType: 'react-native',
     appName: appName ?? pkg?.name ?? null,
-    version: pkg?.version ?? null,
+    version: pkg?.version ?? expo?.version ?? null,
     ios: { bundleId },
     android: { packageName },
     scannedAt: new Date().toISOString(),

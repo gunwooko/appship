@@ -11,6 +11,10 @@ const FIXTURE = join(
   dirname(fileURLToPath(import.meta.url)),
   '../../../fixtures/rn-voice-app',
 );
+const EXPO_FIXTURE = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/expo-quiz-app',
+);
 
 describe('detectProjectType', () => {
   it('detects the React Native fixture', async () => {
@@ -133,5 +137,48 @@ describe('scanProject (integration)', () => {
     const result = await scanProject(FIXTURE);
     const sdkIds = result.sdkReport.sdks.map((s) => s.id);
     expect(sdkIds).not.toContain('revenuecat');
+  });
+});
+
+describe('scanProject on an Expo managed project', () => {
+  it('reads identity from app.json expo config (no native directories)', async () => {
+    const result = await scanProject(EXPO_FIXTURE);
+    expect(result.project).toMatchObject({
+      projectType: 'react-native',
+      appName: 'Quiz Master',
+      version: '2.1.0',
+      ios: { bundleId: 'com.example.quizmaster' },
+      android: { packageName: 'com.example.quizmaster' },
+    });
+  });
+
+  it('reads permissions from expo.ios.infoPlist and expo.android.permissions', async () => {
+    const result = await scanProject(EXPO_FIXTURE);
+
+    const camera = result.permissions.ios.find((f) => f.key === 'NSCameraUsageDescription');
+    expect(camera).toBeDefined();
+    expect(camera!.qualityAssessment).toBe('ok'); // specific purpose stated
+    expect(camera!.evidence).toContain('app.json (expo)');
+
+    const androidKeys = result.permissions.android.map((f) => f.key);
+    expect(androidKeys).toContain('android.permission.CAMERA'); // normalized from "CAMERA"
+    expect(androidKeys).toContain('android.permission.POST_NOTIFICATIONS');
+  });
+
+  it('detects the Expo fixture SDK combination', async () => {
+    const result = await scanProject(EXPO_FIXTURE);
+    const sdkIds = result.sdkReport.sdks.map((s) => s.id);
+    expect(sdkIds).toEqual(
+      expect.arrayContaining(['revenuecat', 'mixpanel', 'google-signin', 'admob', 'camera']),
+    );
+    expect(sdkIds).not.toContain('firebase-analytics');
+    expect(sdkIds).not.toContain('sentry');
+
+    const revenuecat = result.sdkReport.sdks.find((s) => s.id === 'revenuecat')!;
+    expect(revenuecat.confidence).toBe('high');
+    expect(revenuecat.evidence).toContain('src/lib/purchases.ts:4');
+
+    expect(result.privacyReport.dataCollection['purchase_history']).toBeDefined();
+    expect(result.privacyReport.dataCollection['advertising_id']?.shared).toBe(true);
   });
 });

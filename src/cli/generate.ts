@@ -51,10 +51,11 @@ export const generateCommand = new Command('generate')
   .option('--locale <locale>', 'generate only for the given locale')
   .option('--dry-run', 'list what would be generated without calling AI or writing files')
   .option('--yes', 'overwrite existing generated files without asking')
+  .option('--non-interactive', 'never prompt (CI): skip confirmations, overwrite existing files')
   .action(
     async (
       targetArg: string | undefined,
-      options: { locale?: string; dryRun?: boolean; yes?: boolean },
+      options: { locale?: string; dryRun?: boolean; yes?: boolean; nonInteractive?: boolean },
     ) => {
       const projectRoot = process.cwd();
 
@@ -113,7 +114,7 @@ export const generateCommand = new Command('generate')
       }
       await mergePreviousConfirmations(projectRoot, scan);
 
-      const interactive = Boolean(process.stdout.isTTY);
+      const interactive = !options.nonInteractive && Boolean(process.stdout.isTTY);
       if (!(await confirmFindings(scan, interactive))) {
         console.log(pc.yellow('Cancelled — nothing was generated.'));
         process.exitCode = 1;
