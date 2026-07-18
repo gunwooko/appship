@@ -5,6 +5,7 @@ import { doctorCommand } from './cli/doctor.js';
 import { localizeCommand } from './cli/localize.js';
 import { exportCommand } from './cli/export.js';
 import { uploadCommand } from './cli/upload.js';
+import { screenshotsCommand } from './cli/screenshots.js';
 
 const program = new Command();
 
@@ -20,6 +21,7 @@ program.addCommand(generateCommand);
 program.addCommand(localizeCommand);
 program.addCommand(exportCommand);
 program.addCommand(uploadCommand);
+program.addCommand(screenshotsCommand);
 program.addCommand(doctorCommand);
 
 program.parseAsync(process.argv);
