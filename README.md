@@ -4,15 +4,17 @@
 
 Ship your mobile app without spending hours inside App Store Connect and Google Play Console.
 
-**Status: early development (MVP 1, not yet functional).** See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
+**Status: MVP 1 implemented (early development).** React Native projects only for now. See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
 
-## What it will do (MVP 1)
+## Commands (MVP 1)
 
 ```bash
 appship init      # analyze your React Native project, ask a few questions
 appship generate  # generate store metadata, privacy docs, legal drafts into .appship/
 appship doctor    # check submission readiness and rejection risks (offline)
 ```
+
+`generate` calls an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline.
 
 ## Principles
 
