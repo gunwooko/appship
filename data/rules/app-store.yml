@@ -44,3 +44,4 @@
   target: "**/*.md"
   check: { type: not_contains, value: "[CONFIRM:" }
   message: "Generated document still contains unresolved [CONFIRM] placeholders"
+  pass_message: "No unresolved [CONFIRM] placeholders"

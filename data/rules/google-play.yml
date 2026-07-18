@@ -31,3 +31,21 @@
   target: google-play/*/title.txt
   check: { type: no_emoji }
   message: "Emoji in the title may violate Google Play metadata policy"
+
+- id: data-safety-confirm-markers
+  store: google-play
+  category: consistency
+  severity: error
+  target: google-play/data-safety.yml
+  check: { type: not_contains, value: "confirm_before_submitting" }
+  message: "data-safety.yml still contains confirm_before_submitting markers — resolve them before filling the Play Console form"
+  pass_message: "Data Safety confirm markers resolved"
+
+- id: play-unresolved-confirm-placeholders
+  store: google-play
+  category: consistency
+  severity: error
+  target: legal/*.md
+  check: { type: not_contains, value: "[CONFIRM:" }
+  message: "Generated legal documents still contain unresolved [CONFIRM] placeholders"
+  pass_message: "No unresolved [CONFIRM] placeholders in legal documents"

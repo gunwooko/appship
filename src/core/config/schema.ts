@@ -18,6 +18,7 @@ export const appshipConfigSchema = z.object({
     audience: z.array(z.string()).default([]),
     requires_login: z.boolean().optional(),
     collects_personal_data: z.boolean().optional(),
+    support_url: z.string().url().optional(),
   }),
   platforms: z.object({
     ios: z

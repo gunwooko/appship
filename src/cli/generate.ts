@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { Command } from 'commander';
@@ -6,28 +6,14 @@ import pc from 'picocolors';
 import * as p from '@clack/prompts';
 import { loadConfig, ConfigError } from '../core/config/load.js';
 import { scanProject } from '../core/scanner/index.js';
+import {
+  mergePreviousConfirmations,
+  PRIVACY_REPORT_PATH,
+} from '../core/scanner/confirmations.js';
 import { UnsupportedProjectError } from '../core/project/detector.js';
 import { createProvider, AIProviderError } from '../core/ai/index.js';
 import { planArtifacts, runGenerate, type GenerateTarget } from '../core/generate/index.js';
 import type { ScanResult } from '../core/types.js';
-
-const PRIVACY_REPORT_PATH = '.appship/analysis/privacy-report.json';
-
-/** Carry over confirmations from a previous run so re-scans don't lose them. */
-async function mergePreviousConfirmations(projectRoot: string, scan: ScanResult): Promise<void> {
-  try {
-    const raw = await readFile(join(projectRoot, PRIVACY_REPORT_PATH), 'utf8');
-    const previous = JSON.parse(raw) as ScanResult['privacyReport'];
-    for (const [dataType, entry] of Object.entries(previous.dataCollection ?? {})) {
-      const current = scan.privacyReport.dataCollection[dataType];
-      if (current && entry.confirmed !== null && entry.confirmed !== undefined) {
-        current.confirmed = entry.confirmed;
-      }
-    }
-  } catch {
-    // no previous report — nothing to merge
-  }
-}
 
 async function confirmFindings(scan: ScanResult, interactive: boolean): Promise<boolean> {
   const pending = Object.entries(scan.privacyReport.dataCollection).filter(
