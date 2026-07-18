@@ -13,6 +13,7 @@ appship init                 # analyze your React Native project, ask a few ques
 appship generate             # generate store metadata, privacy docs, legal drafts into .appship/
 appship localize ko-KR ja-JP # translate generated listings into more locales
 appship export fastlane      # export listings to fastlane deliver/supply layouts (offline)
+appship export ci            # generate GitHub Actions workflows (readiness gate + release)
 appship upload ios           # upload a built .ipa to TestFlight via fastlane
 appship upload android       # upload a built .aab to a Play track (default: internal)
 appship screenshots flows    # turn the screenshot plan into Maestro flows (offline)
@@ -24,6 +25,8 @@ appship review analyze r.txt # turn a store rejection message into a fix plan
 ```
 
 `export fastlane` maps everything under `.appship/` into `fastlane/metadata/` (deliver) and `fastlane/metadata/android/` (supply), plus starter `Appfile`/`Fastfile` upload lanes — existing fastlane files are never overwritten without `--force`. Upload with `bundle exec fastlane ios upload_metadata` / `... android upload_metadata`.
+
+`export ci` writes two GitHub Actions workflows: a readiness gate that runs `appship doctor` on every PR (works out of the box — doctor is offline), and a `workflow_dispatch` release pipeline that builds, uploads via `appship upload --yes`, and optionally submits. The build steps are project-specific, so they carry `TODO(appship)` markers for you to finish (Android is pre-filled for gradle/Expo prebuild; iOS signing needs your fastlane match setup). Existing workflow files are never overwritten without `--force`.
 
 `upload` finds your newest built artifact (or takes `--ipa`/`--aab`), shows exactly what will run, asks for confirmation (`--yes` to skip, required in CI), then delegates to the fastlane lanes from `export fastlane`. fastlane owns store auth — set up an App Store Connect API key / Play service account per fastlane's docs.
 
