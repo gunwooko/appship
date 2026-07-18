@@ -1,0 +1,17 @@
+name: flutter_todo_app
+description: A todo app with reminders and photo attachments.
+version: 3.0.1+12
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  firebase_analytics: ^11.0.0
+  geolocator: ^13.0.0
+  camera: ^0.11.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

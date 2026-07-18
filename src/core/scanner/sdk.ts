@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import glob from 'fast-glob';
 import { readPackageJson } from '../project/detector.js';
+import { readPubspec } from '../project/flutter.js';
 import type { SdkSignature } from './signatures.js';
 import {
   requireEvidence,
@@ -13,7 +14,7 @@ import {
   type SdkReport,
 } from '../types.js';
 
-const SOURCE_GLOBS = ['**/*.{js,jsx,ts,tsx}'];
+const SOURCE_GLOBS = ['**/*.{js,jsx,ts,tsx}', 'lib/**/*.dart'];
 const SOURCE_IGNORE = [
   '**/node_modules/**',
   'ios/**',
@@ -65,6 +66,11 @@ export async function scanSdks(
 ): Promise<{ sdkReport: SdkReport; privacyReport: PrivacyReport }> {
   const pkg = await readPackageJson(projectRoot);
   const dependencyNames = Object.keys({ ...pkg?.dependencies, ...pkg?.devDependencies });
+  const pubspec = await readPubspec(projectRoot);
+  const pubspecDependencyNames = Object.keys({
+    ...pubspec?.dependencies,
+    ...pubspec?.dev_dependencies,
+  });
   const podfile = await readPodfile(projectRoot);
   const sourceFiles = await collectSourceFiles(projectRoot);
   const permissionKeys = new Map<string, string[]>();
@@ -86,7 +92,13 @@ export async function scanSdks(
       if (dependencyNames.includes(dep)) {
         match.dependencyEvidence.push(`package.json: ${dep}`);
       }
-      if (podfile?.includes(dep)) {
+      if (pubspecDependencyNames.includes(dep)) {
+        match.dependencyEvidence.push(`pubspec.yaml: ${dep}`);
+      }
+      // Dart package names (lower_snake_case, e.g. "camera", "record") are too
+      // generic for substring matching against a Podfile — exact pubspec
+      // matches above are their only dependency evidence.
+      if (!/^[a-z0-9_]+$/.test(dep) && podfile?.includes(dep)) {
         match.dependencyEvidence.push(`ios/Podfile: ${dep}`);
       }
     }

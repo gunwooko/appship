@@ -31,7 +31,11 @@ const SENSITIVE_PERMISSION_NAMES: Record<string, string> = {
 function printDetectionSummary(scan: ScanResult): void {
   const check = (label: string) => console.log(`${pc.green('✓')} ${label}`);
 
-  check('React Native project detected');
+  const typeLabels: Record<string, string> = {
+    'react-native': 'React Native',
+    flutter: 'Flutter',
+  };
+  check(`${typeLabels[scan.project.projectType] ?? scan.project.projectType} project detected`);
   if (scan.project.ios?.bundleId) check(`iOS bundle ID: ${scan.project.ios.bundleId}`);
   if (scan.project.android?.packageName)
     check(`Android package: ${scan.project.android.packageName}`);

@@ -3,7 +3,7 @@
 
 export type Confidence = 'high' | 'medium' | 'low';
 
-export type ProjectType = 'react-native';
+export type ProjectType = 'react-native' | 'flutter';
 
 export interface ProjectAnalysis {
   projectType: ProjectType;

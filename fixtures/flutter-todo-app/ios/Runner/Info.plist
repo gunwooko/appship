@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>Flutter Todo</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The camera is used to attach photos of receipts and documents to your todos.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location is used to remind you of todos when you arrive at a saved place.</string>
+</dict>
+</plist>

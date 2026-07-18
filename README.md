@@ -4,7 +4,7 @@
 
 Ship your mobile app without spending hours inside App Store Connect and Google Play Console.
 
-**Status: MVP 2 implemented (early development).** React Native projects only for now. See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
+**Status: MVP 2 implemented, MVP 3 in progress (early development).** React Native, Expo, and Flutter projects. See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
 
 ## Commands
 
@@ -38,7 +38,7 @@ appship review analyze r.txt # turn a store rejection message into a fix plan
 
 `generate`, `localize`, and `review analyze` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
 
-Supported projects: React Native CLI and Expo (managed) — identity and permissions are read from native files (`Info.plist`, `AndroidManifest.xml`, `project.pbxproj`, `build.gradle`) or from `app.json`'s `expo` config.
+Supported projects: React Native CLI, Expo (managed), and Flutter — identity and permissions are read from native files (`Info.plist`, `AndroidManifest.xml`, `project.pbxproj`, `build.gradle`), from `app.json`'s `expo` config, or from `pubspec.yaml`. SDK detection covers both npm packages and Dart/Flutter packages (`firebase_analytics`, `geolocator`, `sentry_flutter`, ...).
 
 ## Using doctor as a CI gate
 

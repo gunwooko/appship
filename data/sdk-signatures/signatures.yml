@@ -12,8 +12,10 @@
   detect:
     dependencies:
       - "@react-native-firebase/analytics"
+      - "firebase_analytics"
     source_patterns:
       - "analytics\\(\\)\\.logEvent"
+      - "FirebaseAnalytics\\.instance"
     config_keys: []
   data_safety:
     collects: [device_id, app_interactions]
@@ -27,8 +29,10 @@
   detect:
     dependencies:
       - "@sentry/react-native"
+      - "sentry_flutter"
     source_patterns:
       - "Sentry\\.init"
+      - "SentryFlutter\\.init"
     config_keys: []
   data_safety:
     collects: [crash_logs, diagnostics, device_id]
@@ -42,6 +46,7 @@
   detect:
     dependencies:
       - "react-native-purchases"
+      - "purchases_flutter"
     source_patterns:
       - "Purchases\\.configure"
     config_keys: []
@@ -58,9 +63,12 @@
     dependencies:
       - "@react-native-community/geolocation"
       - "react-native-geolocation-service"
+      - "geolocator"
+      - "location"
     source_patterns:
       - "Geolocation\\.getCurrentPosition"
       - "watchPosition"
+      - "Geolocator\\."
     config_keys:
       - NSLocationWhenInUseUsageDescription
       - android.permission.ACCESS_FINE_LOCATION
@@ -79,6 +87,7 @@
     dependencies:
       - "@amplitude/analytics-react-native"
       - "@amplitude/react-native"
+      - "amplitude_flutter"
     source_patterns:
       - "amplitude\\.(init|track)"
     config_keys: []
@@ -94,6 +103,7 @@
   detect:
     dependencies:
       - "mixpanel-react-native"
+      - "mixpanel_flutter"
     source_patterns:
       - "new Mixpanel\\("
     config_keys: []
@@ -109,8 +119,10 @@
   detect:
     dependencies:
       - "@react-native-firebase/crashlytics"
+      - "firebase_crashlytics"
     source_patterns:
       - "crashlytics\\(\\)"
+      - "FirebaseCrashlytics\\.instance"
     config_keys: []
   data_safety:
     collects: [crash_logs, diagnostics, device_id]
@@ -124,8 +136,10 @@
   detect:
     dependencies:
       - "@react-native-google-signin/google-signin"
+      - "google_sign_in"
     source_patterns:
       - "GoogleSignin\\."
+      - "GoogleSignIn\\("
     config_keys: []
   data_safety:
     collects: [email, name, account_info]
@@ -139,8 +153,10 @@
   detect:
     dependencies:
       - "@invertase/react-native-apple-authentication"
+      - "sign_in_with_apple"
     source_patterns:
       - "appleAuth\\."
+      - "SignInWithApple\\."
     config_keys: []
   data_safety:
     collects: [email, name]
@@ -155,6 +171,8 @@
     dependencies:
       - "react-native-fbsdk-next"
       - "react-native-fbsdk"
+      - "flutter_facebook_auth"
+      - "facebook_app_events"
     source_patterns:
       - "LoginManager\\.logInWithPermissions"
     config_keys: []
@@ -170,6 +188,7 @@
   detect:
     dependencies:
       - "@stripe/stripe-react-native"
+      - "flutter_stripe"
     source_patterns:
       - "useStripe\\(|initPaymentSheet"
     config_keys: []
@@ -185,8 +204,10 @@
   detect:
     dependencies:
       - "react-native-google-mobile-ads"
+      - "google_mobile_ads"
     source_patterns:
       - "BannerAd|InterstitialAd|RewardedAd"
+      - "MobileAds\\.instance"
     config_keys: []
   data_safety:
     collects: [advertising_id, device_id]
@@ -200,6 +221,7 @@
   detect:
     dependencies:
       - "react-native-appsflyer"
+      - "appsflyer_sdk"
     source_patterns:
       - "appsFlyer\\."
     config_keys: []
@@ -215,6 +237,7 @@
   detect:
     dependencies:
       - "react-native-onesignal"
+      - "onesignal_flutter"
     source_patterns:
       - "OneSignal\\."
     config_keys: []
@@ -230,8 +253,10 @@
   detect:
     dependencies:
       - "@react-native-firebase/messaging"
+      - "firebase_messaging"
     source_patterns:
       - "messaging\\(\\)\\.(getToken|onMessage)"
+      - "FirebaseMessaging\\.instance"
     config_keys: []
   data_safety:
     collects: [device_id]
@@ -243,7 +268,10 @@
   name: Microphone
   category: device-api
   detect:
-    dependencies: []
+    dependencies:
+      - "record"
+      - "flutter_sound"
+      - "speech_to_text"
     source_patterns: []
     config_keys:
       - NSMicrophoneUsageDescription
@@ -263,6 +291,8 @@
       - "react-native-vision-camera"
       - "react-native-camera"
       - "react-native-image-picker"
+      - "camera"
+      - "image_picker"
     source_patterns: []
     config_keys:
       - NSCameraUsageDescription
@@ -279,6 +309,7 @@
   detect:
     dependencies:
       - "react-native-contacts"
+      - "flutter_contacts"
     source_patterns: []
     config_keys:
       - NSContactsUsageDescription
@@ -295,6 +326,7 @@
   detect:
     dependencies:
       - "react-native-tracking-transparency"
+      - "app_tracking_transparency"
     source_patterns:
       - "requestTrackingPermission"
     config_keys:

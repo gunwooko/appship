@@ -26,8 +26,13 @@ export async function detectProjectType(projectRoot: string): Promise<ProjectTyp
   if (pkg && 'react-native' in deps) {
     return 'react-native';
   }
+  const { readPubspec, isFlutterPubspec } = await import('./flutter.js');
+  if (isFlutterPubspec(await readPubspec(projectRoot))) {
+    return 'flutter';
+  }
   throw new UnsupportedProjectError(
-    'No supported project detected. MVP 1 supports React Native projects ' +
-      '(package.json with a react-native dependency).',
+    'No supported project detected. AppShip supports React Native ' +
+      '(package.json with a react-native dependency) and Flutter ' +
+      '(pubspec.yaml with a flutter dependency).',
   );
 }

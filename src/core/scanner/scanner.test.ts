@@ -15,10 +15,18 @@ const EXPO_FIXTURE = join(
   dirname(fileURLToPath(import.meta.url)),
   '../../../fixtures/expo-quiz-app',
 );
+const FLUTTER_FIXTURE = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/flutter-todo-app',
+);
 
 describe('detectProjectType', () => {
   it('detects the React Native fixture', async () => {
     await expect(detectProjectType(FIXTURE)).resolves.toBe('react-native');
+  });
+
+  it('detects the Flutter fixture', async () => {
+    await expect(detectProjectType(FLUTTER_FIXTURE)).resolves.toBe('flutter');
   });
 
   it('rejects a directory without a supported project', async () => {
@@ -137,6 +145,46 @@ describe('scanProject (integration)', () => {
     const result = await scanProject(FIXTURE);
     const sdkIds = result.sdkReport.sdks.map((s) => s.id);
     expect(sdkIds).not.toContain('revenuecat');
+  });
+});
+
+describe('scanProject on a Flutter project', () => {
+  it('reads identity from pubspec and the native projects', async () => {
+    const result = await scanProject(FLUTTER_FIXTURE);
+    expect(result.project).toMatchObject({
+      projectType: 'flutter',
+      appName: 'flutter_todo_app',
+      version: '3.0.1', // build number (+12) stripped
+      ios: { bundleId: 'com.example.fluttertodo' },
+      android: { packageName: 'com.example.fluttertodo' },
+    });
+  });
+
+  it('finds permissions in the Flutter native projects', async () => {
+    const result = await scanProject(FLUTTER_FIXTURE);
+    const camera = result.permissions.ios.find((f) => f.key === 'NSCameraUsageDescription');
+    expect(camera).toBeDefined();
+    expect(camera!.qualityAssessment).toBe('ok');
+    expect(camera!.evidence).toContain('ios/Runner/Info.plist');
+    const androidKeys = result.permissions.android.map((f) => f.key);
+    expect(androidKeys).toContain('android.permission.ACCESS_FINE_LOCATION');
+  });
+
+  it('detects SDKs from pubspec dependencies and Dart sources', async () => {
+    const result = await scanProject(FLUTTER_FIXTURE);
+    const sdkIds = result.sdkReport.sdks.map((s) => s.id);
+    expect(sdkIds).toEqual(
+      expect.arrayContaining(['firebase-analytics', 'location', 'camera']),
+    );
+    expect(sdkIds).not.toContain('sentry');
+
+    const firebase = result.sdkReport.sdks.find((s) => s.id === 'firebase-analytics')!;
+    expect(firebase.confidence).toBe('high');
+    expect(firebase.evidence).toContain('pubspec.yaml: firebase_analytics');
+    expect(firebase.evidence).toContain('lib/main.dart:13');
+
+    const location = result.privacyReport.dataCollection['location'];
+    expect(location?.requiresConfirmation).toBe(true);
   });
 });
 

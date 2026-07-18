@@ -1,0 +1,9 @@
+android {
+    namespace "com.example.fluttertodo"
+
+    defaultConfig {
+        applicationId "com.example.fluttertodo"
+        minSdkVersion 21
+        targetSdkVersion 34
+    }
+}

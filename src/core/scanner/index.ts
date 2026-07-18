@@ -3,16 +3,19 @@
 
 import { detectProjectType } from '../project/detector.js';
 import { analyzeReactNativeProject } from '../project/react-native.js';
+import { analyzeFlutterProject } from '../project/flutter.js';
 import type { ScanResult } from '../types.js';
 import { loadSignatures } from './signatures.js';
 import { scanPermissions } from './permissions.js';
 import { scanSdks } from './sdk.js';
 
 export async function scanProject(projectRoot: string): Promise<ScanResult> {
-  await detectProjectType(projectRoot); // throws UnsupportedProjectError if not RN
+  const projectType = await detectProjectType(projectRoot); // throws UnsupportedProjectError
 
   const [project, permissions, signatures] = await Promise.all([
-    analyzeReactNativeProject(projectRoot),
+    projectType === 'flutter'
+      ? analyzeFlutterProject(projectRoot)
+      : analyzeReactNativeProject(projectRoot),
     scanPermissions(projectRoot),
     loadSignatures(),
   ]);
