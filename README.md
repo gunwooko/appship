@@ -22,6 +22,7 @@ appship submit ios           # submit the latest uploaded build for App Store re
 appship submit android       # promote a tested Play track to production review
 appship doctor               # check submission readiness and rejection risks (offline)
 appship review analyze r.txt # turn a store rejection message into a fix plan
+appship rules update         # fetch the latest policy rules & SDK signatures
 ```
 
 `export fastlane` maps everything under `.appship/` into `fastlane/metadata/` (deliver) and `fastlane/metadata/android/` (supply), plus starter `Appfile`/`Fastfile` upload lanes — existing fastlane files are never overwritten without `--force`. Upload with `bundle exec fastlane ios upload_metadata` / `... android upload_metadata`.
@@ -35,6 +36,8 @@ appship review analyze r.txt # turn a store rejection message into a fix plan
 `screenshots flows` generates one [Maestro](https://maestro.mobile.dev) flow per screen in the plan; each flow carries a navigation TODO that only you can fill in (appship can't know how to reach your screens). `capture` refuses to run while TODOs remain, then runs `maestro test` and drops PNGs into `.appship/screenshots/raw/`. Your edited flows are never overwritten without `--force`.
 
 `review analyze` reads a rejection message you copied from App Store Connect / Play Console into a text file, and produces per-issue fix steps, the appship commands that help, and (for issues resolvable by replying) a draft response to the review team — written to `.appship/review/rejection-analysis.md`. Guidelines are only cited when the message cites them; nothing is invented beyond the message and the scanned project facts.
+
+Store policies change between releases, so the doctor rules and SDK signature database are plain data files that can be refreshed without a new CLI version: `appship rules update` downloads them from this repository into `~/.appship/data-cache` (schema-validated before anything is written; nothing partial is ever observable), `rules status` shows what is in use, and `rules reset` returns to the bundled files. If a cached file ever stops parsing (e.g. you run a much newer rule format with an old CLI), appship silently falls back to its bundled data.
 
 `generate`, `localize`, and `review analyze` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
 

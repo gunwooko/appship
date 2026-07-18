@@ -8,6 +8,7 @@ import { uploadCommand } from './cli/upload.js';
 import { screenshotsCommand } from './cli/screenshots.js';
 import { submitCommand } from './cli/submit.js';
 import { reviewCommand } from './cli/review.js';
+import { rulesCommand } from './cli/rules.js';
 
 const program = new Command();
 
@@ -27,5 +28,6 @@ program.addCommand(screenshotsCommand);
 program.addCommand(submitCommand);
 program.addCommand(reviewCommand);
 program.addCommand(doctorCommand);
+program.addCommand(rulesCommand);
 
 program.parseAsync(process.argv);

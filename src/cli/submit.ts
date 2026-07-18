@@ -7,7 +7,8 @@ import { loadConfig, ConfigError } from '../core/config/load.js';
 import { scanProject } from '../core/scanner/index.js';
 import { mergePreviousConfirmations } from '../core/scanner/confirmations.js';
 import { UnsupportedProjectError } from '../core/project/detector.js';
-import { loadRules, type Store } from '../core/doctor/rules.js';
+import { type Store } from '../core/doctor/rules.js';
+import { loadRulesWithCache } from '../core/rules-update/index.js';
 import { runDoctor } from '../core/doctor/engine.js';
 import { resolveFastlaneCommand } from '../core/upload/index.js';
 import {
@@ -109,7 +110,7 @@ export const submitCommand = new Command('submit')
       // so blocking errors stop it unless --force.
       await mergePreviousConfirmations(projectRoot, scan);
       const store = DOCTOR_STORE[platform];
-      const [report] = await runDoctor({ projectRoot, config, scan }, await loadRules(), [store]);
+      const [report] = await runDoctor({ projectRoot, config, scan }, await loadRulesWithCache(), [store]);
       const blocking = report!.results.filter(
         (r) => r.status === 'fail' && r.severity === 'error',
       );

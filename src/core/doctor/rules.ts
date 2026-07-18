@@ -31,13 +31,15 @@ const ruleSchema = z.object({
 
 export type DoctorRule = z.infer<typeof ruleSchema>;
 
+export const ruleFileSchema = z.array(ruleSchema);
+
 export async function loadRules(dataDir = findDataDir()): Promise<DoctorRule[]> {
   const rulesDir = join(dataDir, 'rules');
   const files = (await readdir(rulesDir)).filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'));
   const rules: DoctorRule[] = [];
   for (const file of files.sort()) {
     const raw = await readFile(join(rulesDir, file), 'utf8');
-    const parsed = z.array(ruleSchema).safeParse(parse(raw));
+    const parsed = ruleFileSchema.safeParse(parse(raw));
     if (!parsed.success) {
       const details = parsed.error.issues
         .map((i) => `  ${i.path.join('.')}: ${i.message}`)

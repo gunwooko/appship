@@ -6,7 +6,8 @@ import { loadConfig, ConfigError } from '../core/config/load.js';
 import { scanProject } from '../core/scanner/index.js';
 import { mergePreviousConfirmations } from '../core/scanner/confirmations.js';
 import { UnsupportedProjectError } from '../core/project/detector.js';
-import { loadRules, storeSchema, type Store } from '../core/doctor/rules.js';
+import { storeSchema, type Store } from '../core/doctor/rules.js';
+import { loadRulesWithCache } from '../core/rules-update/index.js';
 import { runDoctor, type StoreReport } from '../core/doctor/engine.js';
 
 const STORE_LABELS: Record<Store, string> = {
@@ -83,7 +84,7 @@ export const doctorCommand = new Command('doctor')
     }
     await mergePreviousConfirmations(projectRoot, scan);
 
-    const rules = await loadRules();
+    const rules = await loadRulesWithCache();
     const reports = await runDoctor({ projectRoot, config, scan }, rules, stores);
 
     const machineReport = {
