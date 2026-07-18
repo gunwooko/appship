@@ -34,6 +34,8 @@ function printDetectionSummary(scan: ScanResult): void {
   const typeLabels: Record<string, string> = {
     'react-native': 'React Native',
     flutter: 'Flutter',
+    'native-ios': 'Native iOS',
+    'native-android': 'Native Android',
   };
   check(`${typeLabels[scan.project.projectType] ?? scan.project.projectType} project detected`);
   if (scan.project.ios?.bundleId) check(`iOS bundle ID: ${scan.project.ios.bundleId}`);

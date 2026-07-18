@@ -59,9 +59,16 @@ describe('workflow contents', () => {
     expect(parsed.on.workflow_dispatch.inputs.platform.options).toEqual(['android']);
   });
 
-  it('suggests an Expo-aware android build step', () => {
-    expect(releaseWorkflowContent(BOTH, { isExpo: true })).toContain('expo prebuild');
+  it('suggests a build step matching the project kind', () => {
+    expect(releaseWorkflowContent(BOTH, { androidBuildStyle: 'expo' })).toContain('expo prebuild');
     expect(releaseWorkflowContent(BOTH, {})).not.toContain('expo prebuild');
+    const native = releaseWorkflowContent(BOTH, {
+      androidBuildStyle: 'native',
+      hasNodeProject: false,
+    });
+    expect(native).toContain('run: ./gradlew bundleRelease');
+    expect(native).not.toContain('npm ci');
+    expect(releaseWorkflowContent(BOTH, {})).toContain('npm ci');
   });
 });
 

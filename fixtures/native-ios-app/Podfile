@@ -1,0 +1,6 @@
+platform :ios, '15.0'
+
+target 'NotesApp' do
+  use_frameworks!
+  pod 'Sentry'
+end

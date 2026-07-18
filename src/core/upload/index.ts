@@ -18,6 +18,7 @@ const ARTIFACT_GLOBS: Record<UploadPlatform, string[]> = {
   android: [
     '*.aab',
     'android/app/build/outputs/bundle/**/*.aab',
+    'app/build/outputs/bundle/**/*.aab',
     'build/**/*.aab',
   ],
 };

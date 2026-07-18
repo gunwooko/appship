@@ -1,9 +1,12 @@
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
 import { Command } from 'commander';
 import pc from 'picocolors';
 import { loadConfig, ConfigError } from '../core/config/load.js';
 import { exportFastlane, FastlaneExportError } from '../core/fastlane/index.js';
-import { exportCI, CIExportError } from '../core/ci/index.js';
+import { exportCI, CIExportError, type AndroidBuildStyle } from '../core/ci/index.js';
 import { readExpoConfig } from '../core/project/expo.js';
+import { detectProjectType } from '../core/project/detector.js';
 import type { GenerateTarget } from '../core/generate/index.js';
 
 export const exportCommand = new Command('export')
@@ -48,11 +51,21 @@ export const exportCommand = new Command('export')
           ...(options.force ? { force: true } : {}),
         });
       } else {
-        const isExpo = (await readExpoConfig(projectRoot)) !== null;
+        let projectType: string | null = null;
+        try {
+          projectType = await detectProjectType(projectRoot);
+        } catch {
+          // unsupported project — generic build steps still apply
+        }
+        const isExpo =
+          projectType === 'react-native' && (await readExpoConfig(projectRoot)) !== null;
+        const androidBuildStyle: AndroidBuildStyle =
+          projectType === 'native-android' ? 'native' : isExpo ? 'expo' : 'rn';
         result = await exportCI(projectRoot, config, {
           ...(target ? { target } : {}),
           ...(options.force ? { force: true } : {}),
-          isExpo,
+          androidBuildStyle,
+          hasNodeProject: existsSync(join(projectRoot, 'package.json')),
         });
       }
     } catch (error) {

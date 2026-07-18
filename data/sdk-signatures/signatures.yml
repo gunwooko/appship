@@ -13,9 +13,13 @@
     dependencies:
       - "@react-native-firebase/analytics"
       - "firebase_analytics"
+      - "FirebaseAnalytics"
+      - "com.google.firebase:firebase-analytics"
     source_patterns:
       - "analytics\\(\\)\\.logEvent"
       - "FirebaseAnalytics\\.instance"
+      - "Analytics\\.logEvent"
+      - "Firebase\\.analytics"
     config_keys: []
   data_safety:
     collects: [device_id, app_interactions]
@@ -30,9 +34,12 @@
     dependencies:
       - "@sentry/react-native"
       - "sentry_flutter"
+      - "Sentry"
+      - "io.sentry:sentry-android"
     source_patterns:
       - "Sentry\\.init"
       - "SentryFlutter\\.init"
+      - "SentrySDK\\.start"
     config_keys: []
   data_safety:
     collects: [crash_logs, diagnostics, device_id]
@@ -47,6 +54,8 @@
     dependencies:
       - "react-native-purchases"
       - "purchases_flutter"
+      - "RevenueCat"
+      - "com.revenuecat.purchases:purchases"
     source_patterns:
       - "Purchases\\.configure"
     config_keys: []
@@ -88,6 +97,8 @@
       - "@amplitude/analytics-react-native"
       - "@amplitude/react-native"
       - "amplitude_flutter"
+      - "AmplitudeSwift"
+      - "com.amplitude:analytics-android"
     source_patterns:
       - "amplitude\\.(init|track)"
     config_keys: []
@@ -104,8 +115,11 @@
     dependencies:
       - "mixpanel-react-native"
       - "mixpanel_flutter"
+      - "Mixpanel-swift"
+      - "com.mixpanel.android:mixpanel-android"
     source_patterns:
       - "new Mixpanel\\("
+      - "Mixpanel\\.initialize"
     config_keys: []
   data_safety:
     collects: [device_id, app_interactions]
@@ -120,9 +134,12 @@
     dependencies:
       - "@react-native-firebase/crashlytics"
       - "firebase_crashlytics"
+      - "FirebaseCrashlytics"
+      - "com.google.firebase:firebase-crashlytics"
     source_patterns:
       - "crashlytics\\(\\)"
       - "FirebaseCrashlytics\\.instance"
+      - "Crashlytics\\.crashlytics"
     config_keys: []
   data_safety:
     collects: [crash_logs, diagnostics, device_id]
@@ -137,6 +154,8 @@
     dependencies:
       - "@react-native-google-signin/google-signin"
       - "google_sign_in"
+      - "GoogleSignIn"
+      - "com.google.android.gms:play-services-auth"
     source_patterns:
       - "GoogleSignin\\."
       - "GoogleSignIn\\("
@@ -157,6 +176,7 @@
     source_patterns:
       - "appleAuth\\."
       - "SignInWithApple\\."
+      - "ASAuthorizationAppleIDProvider"
     config_keys: []
   data_safety:
     collects: [email, name]
@@ -173,6 +193,8 @@
       - "react-native-fbsdk"
       - "flutter_facebook_auth"
       - "facebook_app_events"
+      - "FacebookLogin"
+      - "com.facebook.android:facebook-android-sdk"
     source_patterns:
       - "LoginManager\\.logInWithPermissions"
     config_keys: []
@@ -189,6 +211,8 @@
     dependencies:
       - "@stripe/stripe-react-native"
       - "flutter_stripe"
+      - "StripePaymentSheet"
+      - "com.stripe:stripe-android"
     source_patterns:
       - "useStripe\\(|initPaymentSheet"
     config_keys: []
@@ -205,9 +229,12 @@
     dependencies:
       - "react-native-google-mobile-ads"
       - "google_mobile_ads"
+      - "Google-Mobile-Ads-SDK"
+      - "com.google.android.gms:play-services-ads"
     source_patterns:
       - "BannerAd|InterstitialAd|RewardedAd"
       - "MobileAds\\.instance"
+      - "GADMobileAds|MobileAds\\.initialize"
     config_keys: []
   data_safety:
     collects: [advertising_id, device_id]
@@ -222,8 +249,11 @@
     dependencies:
       - "react-native-appsflyer"
       - "appsflyer_sdk"
+      - "AppsFlyerFramework"
+      - "com.appsflyer:af-android-sdk"
     source_patterns:
       - "appsFlyer\\."
+      - "AppsFlyerLib"
     config_keys: []
   data_safety:
     collects: [advertising_id, device_id, app_interactions]
@@ -238,6 +268,8 @@
     dependencies:
       - "react-native-onesignal"
       - "onesignal_flutter"
+      - "OneSignalXCFramework"
+      - "com.onesignal:OneSignal"
     source_patterns:
       - "OneSignal\\."
     config_keys: []
@@ -254,9 +286,12 @@
     dependencies:
       - "@react-native-firebase/messaging"
       - "firebase_messaging"
+      - "FirebaseMessaging"
+      - "com.google.firebase:firebase-messaging"
     source_patterns:
       - "messaging\\(\\)\\.(getToken|onMessage)"
       - "FirebaseMessaging\\.instance"
+      - "Messaging\\.messaging"
     config_keys: []
   data_safety:
     collects: [device_id]
@@ -327,8 +362,10 @@
     dependencies:
       - "react-native-tracking-transparency"
       - "app_tracking_transparency"
+      - "com.google.android.gms:play-services-ads-identifier"
     source_patterns:
       - "requestTrackingPermission"
+      - "ATTrackingManager"
     config_keys:
       - NSUserTrackingUsageDescription
       - com.google.android.gms.permission.AD_ID

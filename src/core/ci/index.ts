@@ -11,12 +11,16 @@ import type { GenerateTarget } from '../generate/index.js';
 
 export class CIExportError extends Error {}
 
+export type AndroidBuildStyle = 'rn' | 'expo' | 'native';
+
 export interface CIExportOptions {
   target?: GenerateTarget;
   /** Overwrite existing workflow files. */
   force?: boolean;
-  /** Expo managed project — changes the suggested Android build step. */
-  isExpo?: boolean;
+  /** Which suggested Android build step fits the project (default: rn). */
+  androidBuildStyle?: AndroidBuildStyle;
+  /** Include `npm ci` in release jobs (false for non-Node projects). */
+  hasNodeProject?: boolean;
 }
 
 export interface CIExportResult {
@@ -44,15 +48,15 @@ jobs:
 `;
 }
 
-const ANDROID_BUILD_STEPS_BARE = `      # TODO(appship): adjust to your release signing setup.
+const ANDROID_BUILD_STEPS: Record<AndroidBuildStyle, string> = {
+  rn: `      # TODO(appship): adjust to your release signing setup.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
       - name: Build release bundle
-        run: cd android && ./gradlew bundleRelease`;
-
-const ANDROID_BUILD_STEPS_EXPO = `      # TODO(appship): this project uses Expo — either build with EAS
+        run: cd android && ./gradlew bundleRelease`,
+  expo: `      # TODO(appship): this project uses Expo — either build with EAS
       # (eas build -p android --non-interactive) and download the artifact,
       # or prebuild and use gradle as below.
       - uses: actions/setup-java@v4
@@ -60,11 +64,22 @@ const ANDROID_BUILD_STEPS_EXPO = `      # TODO(appship): this project uses Expo 
           distribution: temurin
           java-version: 17
       - name: Build release bundle
-        run: npx expo prebuild -p android --no-install && cd android && ./gradlew bundleRelease`;
+        run: npx expo prebuild -p android --no-install && cd android && ./gradlew bundleRelease`,
+  native: `      # TODO(appship): adjust to your release signing setup.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Build release bundle
+        run: ./gradlew bundleRelease`,
+};
 
 export function releaseWorkflowContent(config: AppshipConfig, options: CIExportOptions): string {
   const wantIos = options.target !== 'android' && config.platforms.ios !== undefined;
   const wantAndroid = options.target !== 'ios' && config.platforms.android !== undefined;
+  // node is always set up (appship itself runs via npx); npm ci only applies
+  // to Node projects
+  const npmCi = options.hasNodeProject === false ? '' : '\n      - run: npm ci';
 
   const jobs: string[] = [];
 
@@ -79,9 +94,8 @@ export function releaseWorkflowContent(config: AppshipConfig, options: CIExportO
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - run: npm ci
-${options.isExpo ? ANDROID_BUILD_STEPS_EXPO : ANDROID_BUILD_STEPS_BARE}
+          node-version: 22${npmCi}
+${ANDROID_BUILD_STEPS[options.androidBuildStyle ?? 'rn']}
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
@@ -106,8 +120,7 @@ ${options.isExpo ? ANDROID_BUILD_STEPS_EXPO : ANDROID_BUILD_STEPS_BARE}
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - run: npm ci
+          node-version: 22${npmCi}
       # TODO(appship): building a signed .ipa needs your certificates and
       # provisioning profiles in CI — fastlane match is the usual answer
       # (https://docs.fastlane.tools/actions/match/). Replace this step.

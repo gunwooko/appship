@@ -19,6 +19,14 @@ const FLUTTER_FIXTURE = join(
   dirname(fileURLToPath(import.meta.url)),
   '../../../fixtures/flutter-todo-app',
 );
+const NATIVE_IOS_FIXTURE = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/native-ios-app',
+);
+const NATIVE_ANDROID_FIXTURE = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../../../fixtures/native-android-app',
+);
 
 describe('detectProjectType', () => {
   it('detects the React Native fixture', async () => {
@@ -27,6 +35,11 @@ describe('detectProjectType', () => {
 
   it('detects the Flutter fixture', async () => {
     await expect(detectProjectType(FLUTTER_FIXTURE)).resolves.toBe('flutter');
+  });
+
+  it('detects the native iOS and native Android fixtures', async () => {
+    await expect(detectProjectType(NATIVE_IOS_FIXTURE)).resolves.toBe('native-ios');
+    await expect(detectProjectType(NATIVE_ANDROID_FIXTURE)).resolves.toBe('native-android');
   });
 
   it('rejects a directory without a supported project', async () => {
@@ -185,6 +198,71 @@ describe('scanProject on a Flutter project', () => {
 
     const location = result.privacyReport.dataCollection['location'];
     expect(location?.requiresConfirmation).toBe(true);
+  });
+});
+
+describe('scanProject on a native iOS project', () => {
+  it('reads identity from the root xcodeproj and Info.plist', async () => {
+    const result = await scanProject(NATIVE_IOS_FIXTURE);
+    expect(result.project).toMatchObject({
+      projectType: 'native-ios',
+      appName: 'Notes', // CFBundleDisplayName beats the xcodeproj name
+      version: '2.4.0', // MARKETING_VERSION
+      ios: { bundleId: 'com.example.notes' }, // test target skipped
+      android: null,
+    });
+  });
+
+  it('finds permissions in a root-level Info.plist', async () => {
+    const result = await scanProject(NATIVE_IOS_FIXTURE);
+    const camera = result.permissions.ios.find((f) => f.key === 'NSCameraUsageDescription');
+    expect(camera?.qualityAssessment).toBe('ok');
+    expect(camera?.evidence).toContain('NotesApp/Info.plist');
+    const mic = result.permissions.ios.find((f) => f.key === 'NSMicrophoneUsageDescription');
+    expect(mic?.qualityAssessment).toBe('needs_improvement');
+    expect(result.permissions.android).toEqual([]);
+  });
+
+  it('detects SDKs from the root Podfile and Swift sources', async () => {
+    const result = await scanProject(NATIVE_IOS_FIXTURE);
+    const sentry = result.sdkReport.sdks.find((s) => s.id === 'sentry');
+    expect(sentry).toBeDefined();
+    expect(sentry!.confidence).toBe('high');
+    expect(sentry!.evidence).toContain('Podfile: Sentry');
+    expect(sentry!.evidence).toContain('NotesApp/AppDelegate.swift:10');
+  });
+});
+
+describe('scanProject on a native Android project', () => {
+  it('reads identity from gradle and settings files', async () => {
+    const result = await scanProject(NATIVE_ANDROID_FIXTURE);
+    expect(result.project).toMatchObject({
+      projectType: 'native-android',
+      appName: 'Habit Tracker', // settings.gradle rootProject.name
+      version: '1.5.0', // versionName
+      ios: null,
+      android: { packageName: 'com.example.habits' },
+    });
+  });
+
+  it('finds permissions in the root-level app module manifest', async () => {
+    const result = await scanProject(NATIVE_ANDROID_FIXTURE);
+    const keys = result.permissions.android.map((f) => f.key);
+    expect(keys).toContain('android.permission.RECORD_AUDIO');
+    expect(result.permissions.ios).toEqual([]);
+  });
+
+  it('detects SDKs from gradle Maven coordinates and Kotlin sources', async () => {
+    const result = await scanProject(NATIVE_ANDROID_FIXTURE);
+    const firebase = result.sdkReport.sdks.find((s) => s.id === 'firebase-analytics');
+    expect(firebase).toBeDefined();
+    expect(firebase!.confidence).toBe('high');
+    expect(firebase!.evidence).toContain(
+      'app/build.gradle: com.google.firebase:firebase-analytics',
+    );
+    expect(firebase!.evidence).toContain(
+      'app/src/main/java/com/example/habits/MainActivity.kt:11',
+    );
   });
 });
 

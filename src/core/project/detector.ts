@@ -30,9 +30,17 @@ export async function detectProjectType(projectRoot: string): Promise<ProjectTyp
   if (isFlutterPubspec(await readPubspec(projectRoot))) {
     return 'flutter';
   }
+  const { findRootPbxproj, hasNativeAndroidLayout } = await import('./native.js');
+  const { existsSync } = await import('node:fs');
+  if (hasNativeAndroidLayout(projectRoot, existsSync)) {
+    return 'native-android';
+  }
+  if ((await findRootPbxproj(projectRoot)).length > 0) {
+    return 'native-ios';
+  }
   throw new UnsupportedProjectError(
-    'No supported project detected. AppShip supports React Native ' +
-      '(package.json with a react-native dependency) and Flutter ' +
-      '(pubspec.yaml with a flutter dependency).',
+    'No supported project detected. AppShip supports React Native (package.json ' +
+      'with a react-native dependency), Flutter (pubspec.yaml), native iOS ' +
+      '(.xcodeproj at the root), and native Android (settings.gradle + app/ module).',
   );
 }

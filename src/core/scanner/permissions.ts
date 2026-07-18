@@ -15,8 +15,25 @@ import {
   readExpoConfig,
   EXPO_APP_JSON_EVIDENCE,
 } from '../project/expo.js';
+import type { ProjectType } from '../types.js';
 
 const IGNORE_DIRS = ['**/node_modules/**', '**/Pods/**', '**/build/**', '**/.git/**'];
+
+// RN/Flutter keep their native projects under ios/ & android/; native projects
+// ARE the root, so their manifests are found anywhere (minus the ignore dirs).
+const IOS_PLIST_GLOBS: Record<ProjectType, string[]> = {
+  'react-native': ['ios/**/Info.plist'],
+  flutter: ['ios/**/Info.plist'],
+  'native-ios': ['**/Info.plist'],
+  'native-android': [],
+};
+
+const ANDROID_MANIFEST_GLOBS: Record<ProjectType, string[]> = {
+  'react-native': ['android/**/AndroidManifest.xml'],
+  flutter: ['android/**/AndroidManifest.xml'],
+  'native-ios': [],
+  'native-android': ['**/AndroidManifest.xml'],
+};
 
 // Vague messages Apple regularly rejects: no purpose, no user-facing context.
 const GENERIC_MESSAGE_PATTERNS = [
@@ -33,8 +50,11 @@ export function assessUsageDescription(message: string): UsageDescriptionQuality
   return 'ok';
 }
 
-export async function scanIosPermissions(projectRoot: string): Promise<IosPermissionFinding[]> {
-  const plistFiles = await glob('ios/**/Info.plist', {
+export async function scanIosPermissions(
+  projectRoot: string,
+  projectType: ProjectType = 'react-native',
+): Promise<IosPermissionFinding[]> {
+  const plistFiles = await glob(IOS_PLIST_GLOBS[projectType], {
     cwd: projectRoot,
     ignore: IGNORE_DIRS,
   });
@@ -82,10 +102,11 @@ export async function scanIosPermissions(projectRoot: string): Promise<IosPermis
 
 export async function scanAndroidPermissions(
   projectRoot: string,
+  projectType: ProjectType = 'react-native',
 ): Promise<AndroidPermissionFinding[]> {
-  const manifestFiles = await glob('android/**/AndroidManifest.xml', {
+  const manifestFiles = await glob(ANDROID_MANIFEST_GLOBS[projectType], {
     cwd: projectRoot,
-    ignore: [...IGNORE_DIRS, '**/debug/**'],
+    ignore: [...IGNORE_DIRS, '**/debug/**', '**/androidTest/**'],
   });
 
   const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_' });
@@ -131,10 +152,13 @@ export async function scanAndroidPermissions(
   return [...findings.values()];
 }
 
-export async function scanPermissions(projectRoot: string): Promise<PermissionsReport> {
+export async function scanPermissions(
+  projectRoot: string,
+  projectType: ProjectType = 'react-native',
+): Promise<PermissionsReport> {
   const [ios, android] = await Promise.all([
-    scanIosPermissions(projectRoot),
-    scanAndroidPermissions(projectRoot),
+    scanIosPermissions(projectRoot, projectType),
+    scanAndroidPermissions(projectRoot, projectType),
   ]);
   return { ios, android };
 }

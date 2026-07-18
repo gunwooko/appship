@@ -4,7 +4,7 @@
 
 Ship your mobile app without spending hours inside App Store Connect and Google Play Console.
 
-**Status: MVP 2 implemented, MVP 3 in progress (early development).** React Native, Expo, and Flutter projects. See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
+**Status: MVP 3 implemented (early development).** React Native, Expo, Flutter, native iOS, and native Android projects. See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
 
 ## Commands
 
@@ -41,7 +41,7 @@ Store policies change between releases, so the doctor rules and SDK signature da
 
 `generate`, `localize`, and `review analyze` call an AI provider (Anthropic by default) — set `ANTHROPIC_API_KEY` or log in with `ant auth login`. `init` and `doctor` run fully offline. Translations go through the same store character-limit validation as generation; App Review notes are copied, not translated.
 
-Supported projects: React Native CLI, Expo (managed), and Flutter — identity and permissions are read from native files (`Info.plist`, `AndroidManifest.xml`, `project.pbxproj`, `build.gradle`), from `app.json`'s `expo` config, or from `pubspec.yaml`. SDK detection covers both npm packages and Dart/Flutter packages (`firebase_analytics`, `geolocator`, `sentry_flutter`, ...).
+Supported projects: React Native CLI, Expo (managed), Flutter, native iOS (`.xcodeproj` at the root), and native Android (`settings.gradle` + `app/` module) — identity and permissions are read from native files (`Info.plist`, `AndroidManifest.xml`, `project.pbxproj`, `build.gradle`), from `app.json`'s `expo` config, or from `pubspec.yaml`. SDK detection matches npm packages, Dart/Flutter packages, CocoaPods, and Gradle Maven coordinates, plus source patterns in JS/TS, Dart, Swift, Kotlin, and Java.
 
 ## Using doctor as a CI gate
 

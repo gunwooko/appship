@@ -1,0 +1,22 @@
+// !$*UTF8*$!
+{
+	objects = {
+		13B07F871A680F5B00A75B9A /* Debug */ = {
+			buildSettings = {
+				MARKETING_VERSION = 2.4.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.notes;
+			};
+		};
+		13B07F881A680F5B00A75B9A /* Release */ = {
+			buildSettings = {
+				MARKETING_VERSION = 2.4.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.notes;
+			};
+		};
+		13B07F891A680F5B00A75B9A /* Tests */ = {
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.notesTests;
+			};
+		};
+	};
+}

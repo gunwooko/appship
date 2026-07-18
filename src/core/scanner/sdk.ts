@@ -14,7 +14,7 @@ import {
   type SdkReport,
 } from '../types.js';
 
-const SOURCE_GLOBS = ['**/*.{js,jsx,ts,tsx}', 'lib/**/*.dart'];
+const SOURCE_GLOBS = ['**/*.{js,jsx,ts,tsx}', 'lib/**/*.dart', '**/*.swift', '**/*.{kt,java}'];
 const SOURCE_IGNORE = [
   '**/node_modules/**',
   'ios/**',
@@ -39,12 +39,34 @@ function confidenceOf(match: SignatureMatch): Confidence | null {
   return null;
 }
 
-async function readPodfile(projectRoot: string): Promise<string | null> {
-  try {
-    return await readFile(join(projectRoot, 'ios', 'Podfile'), 'utf8');
-  } catch {
-    return null;
+/** RN/Flutter keep the Podfile under ios/; native iOS keeps it at the root. */
+async function readPodfile(
+  projectRoot: string,
+): Promise<{ path: string; content: string } | null> {
+  for (const path of [join('ios', 'Podfile'), 'Podfile']) {
+    try {
+      return { path, content: await readFile(join(projectRoot, path), 'utf8') };
+    } catch {
+      // try next location
+    }
   }
+  return null;
+}
+
+/** Gradle build scripts hold Maven coordinates (native Android, or RN's android/). */
+async function collectGradleFiles(
+  projectRoot: string,
+): Promise<Array<{ path: string; content: string }>> {
+  const files = await glob(['**/build.gradle', '**/build.gradle.kts'], {
+    cwd: projectRoot,
+    ignore: SOURCE_IGNORE.filter((i) => i !== 'android/**'),
+  });
+  return Promise.all(
+    files.map(async (path) => ({
+      path,
+      content: await readFile(join(projectRoot, path), 'utf8'),
+    })),
+  );
 }
 
 async function collectSourceFiles(
@@ -72,6 +94,7 @@ export async function scanSdks(
     ...pubspec?.dev_dependencies,
   });
   const podfile = await readPodfile(projectRoot);
+  const gradleFiles = await collectGradleFiles(projectRoot);
   const sourceFiles = await collectSourceFiles(projectRoot);
   const permissionKeys = new Map<string, string[]>();
   for (const finding of [...permissions.ios, ...permissions.android]) {
@@ -98,8 +121,16 @@ export async function scanSdks(
       // Dart package names (lower_snake_case, e.g. "camera", "record") are too
       // generic for substring matching against a Podfile — exact pubspec
       // matches above are their only dependency evidence.
-      if (!/^[a-z0-9_]+$/.test(dep) && podfile?.includes(dep)) {
-        match.dependencyEvidence.push(`ios/Podfile: ${dep}`);
+      if (!/^[a-z0-9_]+$/.test(dep) && podfile?.content.includes(dep)) {
+        match.dependencyEvidence.push(`${podfile.path}: ${dep}`);
+      }
+      // Maven coordinates ("group:artifact") only ever appear in gradle scripts.
+      if (dep.includes(':')) {
+        for (const gradle of gradleFiles) {
+          if (gradle.content.includes(dep)) {
+            match.dependencyEvidence.push(`${gradle.path}: ${dep}`);
+          }
+        }
       }
     }
 
