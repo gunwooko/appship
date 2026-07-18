@@ -77,7 +77,7 @@ export const uploadCommand = new Command('upload')
 
       // Artifact
       const explicit = platform === 'ios' ? options.ipa : options.aab;
-      let artifact = explicit ?? (await findArtifact(projectRoot, platform));
+      const artifact = explicit ?? (await findArtifact(projectRoot, platform));
       if (explicit && !existsSync(join(projectRoot, explicit)) && !existsSync(explicit)) {
         console.error(pc.red(`✗ Artifact not found: ${explicit}`));
         process.exitCode = 1;
