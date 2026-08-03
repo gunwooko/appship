@@ -42,8 +42,8 @@ describe('workflow contents', () => {
     };
     expect(Object.keys(parsed.jobs)).toEqual(['android', 'ios']);
     expect(parsed.on.workflow_dispatch.inputs.platform.options).toEqual(['ios', 'android', 'both']);
-    expect(content).toContain('appship upload android --track');
-    expect(content).toContain('appship submit ios --yes');
+    expect(content).toContain('appship-cli upload android --track');
+    expect(content).toContain('appship-cli submit ios --yes');
     expect(content).toContain('TODO(appship)');
     expect(content).toContain('SUPPLY_JSON_KEY_DATA');
     expect(content).toContain('APP_STORE_CONNECT_API_KEY_KEY_ID');
