@@ -1,16 +1,21 @@
 import type { AppshipConfig } from '../config/schema.js';
 import { AnthropicProvider } from './anthropic.js';
-import { AIProviderError, type AIProvider } from './provider.js';
+import { createOpenAICompatibleProvider } from './openai-compatible.js';
+import { type AIProvider } from './provider.js';
 
 export function createProvider(config: AppshipConfig): AIProvider {
   switch (config.ai.provider) {
     case 'anthropic':
       return new AnthropicProvider(config.ai.model);
-    default:
-      throw new AIProviderError(
-        `AI provider "${config.ai.provider}" is not implemented yet. ` +
-          'MVP 1 supports "anthropic" — set ai.provider in appship.yml.',
-      );
+    case 'gemini':
+    case 'openai':
+    case 'ollama':
+    case 'openai-compatible':
+      return createOpenAICompatibleProvider({
+        provider: config.ai.provider,
+        ...(config.ai.model ? { model: config.ai.model } : {}),
+        ...(config.ai.base_url ? { baseUrl: config.ai.base_url } : {}),
+      });
   }
 }
 

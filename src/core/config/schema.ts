@@ -41,6 +41,8 @@ export const appshipConfigSchema = z.object({
     .object({
       provider: aiProviderSchema.default('anthropic'),
       model: z.string().optional(),
+      /** Endpoint for openai-compatible (and optionally ollama) providers. */
+      base_url: z.string().url().optional(),
       tone: z.string().default('friendly'),
     })
     .default({}),
