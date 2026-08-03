@@ -31,7 +31,7 @@ describe('workflow contents', () => {
   it('readiness workflow is valid YAML and gates on doctor', () => {
     const parsed = parseYaml(readinessWorkflowContent()) as Record<string, unknown>;
     expect(parsed.name).toBe('Release readiness');
-    expect(JSON.stringify(parsed)).toContain('npx appship doctor');
+    expect(JSON.stringify(parsed)).toContain('npx appship-cli doctor');
   });
 
   it('release workflow is valid YAML with jobs for both platforms', () => {

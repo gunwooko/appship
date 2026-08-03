@@ -6,6 +6,16 @@ Ship your mobile app without spending hours inside App Store Connect and Google 
 
 **Status: MVP 3 implemented (early development).** React Native, Expo, Flutter, native iOS, and native Android projects. See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
 
+## Install
+
+```bash
+npm install -g appship-cli   # installs the `appship` command
+appship --help
+
+# or run one-off without installing
+npx appship-cli init
+```
+
 ## Commands
 
 ```bash
@@ -58,7 +68,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22 }
-      - run: npx appship doctor        # fails the job on ✗ errors
+      - run: npx appship-cli doctor        # fails the job on ✗ errors
 ```
 
 Add `--json` for machine-readable output; the full report is also written to `.appship/checklist/release-readiness.json`.
