@@ -106,11 +106,14 @@ async function evaluateRule(
           return fail(`${file}: ${content.length} characters`);
         }
         break;
-      case 'not_contains':
-        if (content.includes(String(rule.check.value))) {
-          return fail(file);
+      case 'not_contains': {
+        const needle = String(rule.check.value);
+        if (content.includes(needle)) {
+          const count = content.split(needle).length - 1;
+          return fail(`${file}: ${count} occurrence(s)`);
         }
         break;
+      }
       case 'no_emoji':
         if (EMOJI_PATTERN.test(content)) {
           return fail(file);

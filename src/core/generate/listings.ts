@@ -9,7 +9,7 @@ import {
   type Violation,
 } from '../metadata/validator.js';
 
-const MAX_RETRIES = 2;
+const MAX_RETRIES = 3;
 
 export const appStoreListingSchema = z.object({
   name: z.string(),
@@ -128,7 +128,11 @@ export async function generateWithRetry<T>(
     prompt =
       basePrompt +
       '\n\nYour previous attempt violated these constraints — fix them and regenerate:\n' +
-      violations.map((v) => `- ${v.message}`).join('\n');
+      violations.map((v) => `- ${v.message}`).join('\n') +
+      '\n\nFor character-limit violations: character limits are hard store rules, not ' +
+      'suggestions. Count the characters of your replacement before answering and make it ' +
+      'comfortably shorter than the limit (aim for ~10% under) — cutting words is better ' +
+      'than exceeding the limit.';
     listing = parse(await provider.generateObject({ system, prompt, jsonSchema }));
     violations = validate(listing);
   }
