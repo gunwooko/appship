@@ -13,7 +13,7 @@ import {
 import {
   normalizeAndroidPermission,
   readExpoConfig,
-  EXPO_APP_JSON_EVIDENCE,
+  expoConfigEvidence,
 } from '../project/expo.js';
 import type { ProjectType } from '../types.js';
 
@@ -85,7 +85,7 @@ export async function scanIosPermissions(
     }
   }
 
-  // Expo managed: usage descriptions live in app.json expo.ios.infoPlist
+  // Expo managed: usage descriptions live in the expo config's ios.infoPlist
   const expo = await readExpoConfig(projectRoot);
   for (const [key, value] of Object.entries(expo?.ios?.infoPlist ?? {})) {
     if (!key.endsWith('UsageDescription') || findings.has(key)) continue;
@@ -94,7 +94,7 @@ export async function scanIosPermissions(
       key,
       currentMessage: message,
       qualityAssessment: assessUsageDescription(message),
-      evidence: requireEvidence([EXPO_APP_JSON_EVIDENCE], `ios permission ${key}`),
+      evidence: requireEvidence([expoConfigEvidence(projectRoot)], `ios permission ${key}`),
     });
   }
   return [...findings.values()];
@@ -139,14 +139,14 @@ export async function scanAndroidPermissions(
     }
   }
 
-  // Expo managed: permissions live in app.json expo.android.permissions
+  // Expo managed: permissions live in the expo config's android.permissions
   const expo = await readExpoConfig(projectRoot);
   for (const raw of expo?.android?.permissions ?? []) {
     const name = normalizeAndroidPermission(raw);
     if (findings.has(name)) continue;
     findings.set(name, {
       key: name,
-      evidence: requireEvidence([EXPO_APP_JSON_EVIDENCE], `android permission ${name}`),
+      evidence: requireEvidence([expoConfigEvidence(projectRoot)], `android permission ${name}`),
     });
   }
   return [...findings.values()];

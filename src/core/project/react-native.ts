@@ -10,8 +10,8 @@ const IGNORE_DIRS = ['**/node_modules/**', '**/Pods/**', '**/build/**', '**/.git
 
 async function readAppName(projectRoot: string): Promise<string | null> {
   // React Native CLI: app.json { name, displayName }
-  // Expo: app.json { expo: { name } }. app.config.js needs JS evaluation and
-  // is not supported yet — init falls back to asking the user.
+  // Expo: app.json { expo: { name } }; dynamic configs (app.config.js) are
+  // evaluated by readExpoConfig and merged in by the caller.
   try {
     const raw = await readFile(join(projectRoot, 'app.json'), 'utf8');
     const appJson = JSON.parse(raw) as {
@@ -86,7 +86,7 @@ export async function analyzeReactNativeProject(projectRoot: string): Promise<Pr
 
   return {
     projectType: 'react-native',
-    appName: appName ?? pkg?.name ?? null,
+    appName: appName ?? expo?.name ?? pkg?.name ?? null,
     version: pkg?.version ?? expo?.version ?? null,
     ios: { bundleId },
     android: { packageName },
