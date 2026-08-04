@@ -4,6 +4,8 @@
 
 Ship your mobile app without spending hours inside App Store Connect and Google Play Console.
 
+![appship init and doctor in action](docs/demo.gif)
+
 **Status: MVP 3 implemented (early development).** React Native, Expo, Flutter, native iOS, and native Android projects. See [docs/PRD.md](./docs/PRD.md) and [docs/TRD.md](./docs/TRD.md) for the full plan.
 
 ## Install
