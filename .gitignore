@@ -5,3 +5,6 @@ dist/
 .env
 .env.*
 coverage/
+
+# local maintainer notes (not for the public repo)
+MAINTAINER.md
