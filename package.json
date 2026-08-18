@@ -1,6 +1,6 @@
 {
   "name": "appship-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Open-source AI release assistant that analyzes your mobile app and prepares everything required for App Store and Google Play submission",
   "repository": {
     "type": "git",
