@@ -9,6 +9,7 @@ import { screenshotsCommand } from './cli/screenshots.js';
 import { submitCommand } from './cli/submit.js';
 import { reviewCommand } from './cli/review.js';
 import { rulesCommand } from './cli/rules.js';
+import { APPSHIP_VERSION } from './version.js';
 
 const program = new Command();
 
@@ -17,7 +18,7 @@ program
   .description(
     'AI release assistant that analyzes your mobile app and prepares everything required for App Store and Google Play submission',
   )
-  .version('0.1.0');
+  .version(APPSHIP_VERSION);
 
 program.addCommand(initCommand);
 program.addCommand(generateCommand);
